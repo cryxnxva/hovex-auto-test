@@ -56,12 +56,19 @@ class AvitoClient:
     """Источник HTML-выдачи Avito с graceful degradation.
 
     Сначала пытается получить страницу поиска напрямую. Если запрос
-    неудачен (сетевая ошибка, статус не 200, капча) либо сетевые запросы
-    отключены, читает локальный файл ``test_data/{артикул}.html``.
+    неудачен (сетевая ошибка, статус не 200, капча) либо в ответе нет
+    карточек объявлений (анти-бот страница вместо выдачи) — читает
+    локальный файл ``test_data/{артикул}.html``.
     """
 
     # Маркеры капчи: редирект на captcha-эндпоинт либо data-marker в разметке.
     _CAPTCHA_MARKERS: tuple[str, ...] = ('data-marker="captcha"', "avito-captcha")
+    # Маркеры карточек объявлений в HTML выдачи.
+    _CARD_MARKERS: tuple[str, ...] = (
+        'data-marker="item"',
+        'data-marker="item-title"',
+        'itemprop="item"',
+    )
 
     def __init__(self, config: AppConfig) -> None:
         self._config = config
@@ -93,6 +100,11 @@ class AvitoClient:
         if self._is_captcha(response):
             logger.warning("Обнаружена капча Avito, переключаюсь на локальный файл")
             return None
+        if not self._has_cards(response.text):
+            logger.warning(
+                "Живой ответ не содержит карточек объявлений, переключаюсь на локальный файл"
+            )
+            return None
         logger.info("Живой запрос успешен (HTTP %s)", response.status_code)
         return response.text
 
@@ -118,6 +130,11 @@ class AvitoClient:
             return True
         body = response.text.lower()
         return any(marker in body for marker in AvitoClient._CAPTCHA_MARKERS)
+
+    @staticmethod
+    def _has_cards(html: str) -> bool:
+        """Содержит ли HTML маркеры карточек объявлений (признак выдачи)."""
+        return any(marker in html for marker in AvitoClient._CARD_MARKERS)
 
     @staticmethod
     def _decode(data: bytes) -> str:
