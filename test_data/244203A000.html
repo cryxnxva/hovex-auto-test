@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>244203A000 — Натяжитель цепи масляного насоса — объявления на Avito</title>
+</head>
+<body>
+    <!--
+        Тестовая фикстура: сохранённая страница выдачи Avito по артикулу
+        244203A000 (Натяжитель цепи масляного насоса).
+
+        Имитирует реальную вёрстку Avito и содержит кейсы для проверки
+        фильтров. Проходит фильтр 6 объявлений, в топ-5 попадают только
+        пять самых дешёвых (самое дорогое из шести отсекается).
+
+        Ожидаемый результат после фильтрации: 2900, 3000, 3100, 3200, 3300 ₽.
+    -->
+
+    <!-- Кейс: новое, Москва, 3000 ₽ — проходит -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/moskva/zapchasti_i_aksessuary/natyazhitel_cepi_maslyanogo_nasosa_244203a000_2111111111">
+            <h3 itemprop="name">Натяжитель цепи масляного насоса 244203A000</h3>
+        </a>
+        <div data-marker="item-price">3&nbsp;000&nbsp;₽</div>
+        <div data-marker="item-address"><span itemprop="addressLocality">Москва</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Новое</span></div>
+    </div>
+
+    <!-- Кейс: новое, Москва, 3500 ₽ — шестое по цене, отсекается топ-5 -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/moskva/zapchasti_i_aksessuary/natyazhitel_244203a000_2222222222">
+            <h3 itemprop="name">Натяжитель цепи 244203A000</h3>
+        </a>
+        <div data-marker="item-price">3&nbsp;500&nbsp;₽</div>
+        <div data-marker="item-address"><span itemprop="addressLocality">Москва</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Новое</span></div>
+    </div>
+
+    <!-- Кейс: новое, Москва, 2900 ₽ — самая дешёвая, проходит -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/moskva/zapchasti_i_aksessuary/natyazhitel_cepi_244203a000_2333333333">
+            <h3 itemprop="name">Натяжитель цепи масляного насоса новый</h3>
+        </a>
+        <meta itemprop="price" content="2900">
+        <div data-marker="item-address"><span itemprop="addressLocality">Москва</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Новое</span></div>
+    </div>
+
+    <!-- Кейс: Москва, но Б/у — отсеивается фильтром состояния -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/moskva/zapchasti_i_aksessuary/natyazhitel_bu_244203a000_2444444444">
+            <h3 itemprop="name">Натяжитель цепи б/у 244203A000</h3>
+        </a>
+        <div data-marker="item-price">4&nbsp;000&nbsp;₽</div>
+        <div data-marker="item-address"><span itemprop="addressLocality">Москва</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Б/у</span></div>
+    </div>
+
+    <!-- Кейс: новое, Московская область (Подольск), 3100 ₽ — проходит -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/moskva/zapchasti_i_aksessuary/natyazhitel_cepi_244203a000_2555555555">
+            <h3 itemprop="name">Натяжитель цепи масляного насоса 244203A000</h3>
+        </a>
+        <div data-marker="item-price">3&nbsp;100&nbsp;₽</div>
+        <div data-marker="item-address"><span itemprop="addressLocality">Московская область, г. Подольск</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Новое</span></div>
+    </div>
+
+    <!-- Кейс: новое, Москва, 3300 ₽ — проходит -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/moskva/zapchasti_i_aksessuary/natyazhitel_244203a000_2666666666">
+            <h3 itemprop="name">Натяжитель цепи 244203A000 новый</h3>
+        </a>
+        <div data-marker="item-price">3&nbsp;300&nbsp;₽</div>
+        <div data-marker="item-address"><span itemprop="addressLocality">Москва</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Новое</span></div>
+    </div>
+
+    <!-- Кейс: новое, Москва, 3200 ₽ — проходит -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/moskva/zapchasti_i_aksessuary/natyazhitel_cepi_244203a000_2777777777">
+            <h3 itemprop="name">Натяжитель цепи масляного насоса</h3>
+        </a>
+        <div data-marker="item-price">3&nbsp;200&nbsp;₽</div>
+        <div data-marker="item-address"><span itemprop="addressLocality">Москва</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Новое</span></div>
+    </div>
+
+    <!-- Кейс: новое, Москва, цена не указана — отсеивается отсутствием числовой цены -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/moskva/zapchasti_i_aksessuary/natyazhitel_244203a000_2888888888">
+            <h3 itemprop="name">Натяжитель цепи 244203A000</h3>
+        </a>
+        <div data-marker="item-price">Цена не указана</div>
+        <div data-marker="item-address"><span itemprop="addressLocality">Москва</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Новое</span></div>
+    </div>
+</body>
+</html>

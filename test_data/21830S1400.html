@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>21830S1400 — Кронштейн КПП в сборе — объявления на Avito</title>
+</head>
+<body>
+    <!--
+        Тестовая фикстура: сохранённая страница выдачи Avito по артикулу
+        21830S1400 (Кронштейн КПП в сборе).
+
+        Имитирует реальную вёрстку Avito (data-marker'ы + микроданные
+        schema.org) и содержит кейсы для проверки фильтров:
+        состояние, регион, дубли по ссылке, цена без числа.
+
+        Ожидаемый результат после фильтрации (New + Москва/МО + числовая
+        цена, сортировка по возрастанию, топ-5, без дублей):
+        1200, 1500, 1800, 2000, 2500 ₽.
+    -->
+
+    <!-- Кейс: новое, Москва, 1500 ₽ — проходит все фильтры -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/moskva/zapchasti_i_aksessuary/kronshteyn_kpp_v_sbore_21830s1400_1111111111">
+            <h3 itemprop="name">Кронштейн КПП в сборе 21830S1400 новый</h3>
+        </a>
+        <meta itemprop="price" content="1500">
+        <div data-marker="item-address"><span itemprop="addressLocality">Москва</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Новое</span></div>
+    </div>
+
+    <!-- Кейс: новое, Москва, 1200 ₽ — самая дешёвая, проходит -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/moskva/zapchasti_i_aksessuary/kronshteyn_21830s1400_2222222222">
+            <h3 itemprop="name">Кронштейн КПП 21830S1400</h3>
+        </a>
+        <div data-marker="item-price">1&nbsp;200&nbsp;₽</div>
+        <div data-marker="item-address"><span itemprop="addressLocality">Москва</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Новое</span></div>
+    </div>
+
+    <!-- Кейс: новое, Московская область (Химки), 1800 ₽ — проходит -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/moskva/zapchasti_i_aksessuary/kronshteyn_kpp_21830s1400_3333333333">
+            <h3 itemprop="name">Кронштейн КПП в сборе для Kia</h3>
+        </a>
+        <meta itemprop="price" content="1800">
+        <div data-marker="item-address"><span itemprop="addressLocality">Московская область, г. Химки</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Новое</span></div>
+    </div>
+
+    <!-- Кейс: новое, Москва, 2000 ₽ — проходит -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/moskva/zapchasti_i_aksessuary/kronshteyn_21830s1400_4444444444">
+            <h3 itemprop="name">Кронштейн КПП в сборе 21830S1400</h3>
+        </a>
+        <div data-marker="item-price">2&nbsp;000&nbsp;₽</div>
+        <div data-marker="item-address"><span itemprop="addressLocality">Москва</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Новое</span></div>
+    </div>
+
+    <!-- Кейс: новое, Москва, 2500 ₽ — проходит, замыкает топ-5 -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/moskva/zapchasti_i_aksessuary/kronshteyn_kpp_21830s1400_5555555555">
+            <h3 itemprop="name">Кронштейн КПП новый 21830S1400</h3>
+        </a>
+        <div data-marker="item-price">2&nbsp;500&nbsp;₽</div>
+        <div data-marker="item-address"><span itemprop="addressLocality">Москва</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Новое</span></div>
+    </div>
+
+    <!-- Кейс: ДУБЛЬ ссылки объявления за 1200 ₽ (урл 2222222222) — должен отсеяться дедупликацией -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/moskva/zapchasti_i_aksessuary/kronshteyn_21830s1400_2222222222">
+            <h3 itemprop="name">Кронштейн КПП 21830S1400 (повтор)</h3>
+        </a>
+        <div data-marker="item-price">5&nbsp;000&nbsp;₽</div>
+        <div data-marker="item-address"><span itemprop="addressLocality">Москва</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Новое</span></div>
+    </div>
+
+    <!-- Кейс: новый, но Санкт-Петербург — отсеивается фильтром региона -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/sankt_peterburg/zapchasti_i_aksessuary/kronshteyn_kpp_21830s1400_7777777777">
+            <h3 itemprop="name">Кронштейн КПП 21830S1400</h3>
+        </a>
+        <div data-marker="item-price">900&nbsp;₽</div>
+        <div data-marker="item-address"><span itemprop="addressLocality">Санкт-Петербург</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Новое</span></div>
+    </div>
+
+    <!-- Кейс: Москва, но Б/у — отсеивается фильтром состояния -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/moskva/zapchasti_i_aksessuary/kronshteyn_kpp_bu_21830s1400_8888888888">
+            <h3 itemprop="name">Кронштейн КПП б/у 21830S1400</h3>
+        </a>
+        <div data-marker="item-price">800&nbsp;₽</div>
+        <div data-marker="item-address"><span itemprop="addressLocality">Москва</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Б/у</span></div>
+    </div>
+
+    <!-- Кейс: новое, Москва, цена "Договорная" — отсеивается отсутствием числовой цены -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/moskva/zapchasti_i_aksessuary/kronshteyn_kpp_21830s1400_9999999999">
+            <h3 itemprop="name">Кронштейн КПП 21830S1400</h3>
+        </a>
+        <div data-marker="item-price">Договорная</div>
+        <div data-marker="item-address"><span itemprop="addressLocality">Москва</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Новое</span></div>
+    </div>
+
+    <!-- Кейс: новый, но Казань — отсеивается фильтром региона -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/kazan/zapchasti_i_aksessuary/kronshteyn_kpp_21830s1400_1010101010">
+            <h3 itemprop="name">Кронштейн КПП 21830S1400</h3>
+        </a>
+        <div data-marker="item-price">1&nbsp;100&nbsp;₽</div>
+        <div data-marker="item-address"><span itemprop="addressLocality">Казань</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Новое</span></div>
+    </div>
+</body>
+</html>
