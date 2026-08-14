@@ -22,3 +22,6 @@ Thumbs.db
 # Project artifacts
 *.xlsx
 *.log
+
+# Local test assignment file (not part of the deliverable)
+HONEX_тестовое.txt
