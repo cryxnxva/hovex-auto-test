@@ -11,7 +11,9 @@
 
         Имитирует реальную вёрстку Avito (data-marker'ы + микроданные
         schema.org) и содержит кейсы для проверки фильтров:
-        состояние, регион, дубли по ссылке, цена без числа.
+        состояние, регион, дубли по ссылке, цена без числа, а также
+        регрессию на ложные срабатывания: «Как новое» и «Московский
+        проспект» в Санкт-Петербурге.
 
         Ожидаемый результат после фильтрации (New + Москва/МО + числовая
         цена, сортировка по возрастанию, топ-5, без дублей):
@@ -115,6 +117,26 @@
         </a>
         <div data-marker="item-price">1&nbsp;100&nbsp;₽</div>
         <div data-marker="item-address"><span itemprop="addressLocality">Казань</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Новое</span></div>
+    </div>
+
+    <!-- Кейс: Москва, но «Как новое» — регрессия: не должен пройти как «Новое» по подстроке -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/moskva/zapchasti_i_aksessuary/kronshteyn_kpp_kak_novoe_21830s1400_1212121212">
+            <h3 itemprop="name">Кронштейн КПП 21830S1400 как новый</h3>
+        </a>
+        <div data-marker="item-price">1&nbsp;000&nbsp;₽</div>
+        <div data-marker="item-address"><span itemprop="addressLocality">Москва</span></div>
+        <div data-marker="item-specific-params"><span>Состояние: Как новое</span></div>
+    </div>
+
+    <!-- Кейс: «Московский проспект» в Санкт-Петербурге — регрессия: ложное срабатывание фильтра региона -->
+    <div data-marker="item">
+        <a itemprop="url" data-marker="item-title" href="/sankt_peterburg/zapchasti_i_aksessuary/kronshteyn_kpp_21830s1400_1313131313">
+            <h3 itemprop="name">Кронштейн КПП 21830S1400</h3>
+        </a>
+        <div data-marker="item-price">1&nbsp;000&nbsp;₽</div>
+        <div data-marker="item-address"><span itemprop="addressLocality">Московский проспект, Санкт-Петербург</span></div>
         <div data-marker="item-specific-params"><span>Состояние: Новое</span></div>
     </div>
 </body>

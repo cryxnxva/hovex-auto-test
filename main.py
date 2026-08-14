@@ -18,6 +18,7 @@ from dataclasses import asdict, dataclass
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
+from urllib.parse import urlsplit, urlunsplit
 
 import pandas as pd
 import requests
@@ -69,6 +70,8 @@ class AvitoClient:
         'data-marker="item-title"',
         'itemprop="item"',
     )
+    # Маркеры легитимной пустой выдачи («ничего не найдено»).
+    _EMPTY_MARKERS: tuple[str, ...] = ('data-marker="empty-state"', "ничего не найдено")
 
     def __init__(self, config: AppConfig) -> None:
         self._config = config
@@ -100,6 +103,11 @@ class AvitoClient:
         if self._is_captcha(response):
             logger.warning("Обнаружена капча Avito, переключаюсь на локальный файл")
             return None
+        if self._is_empty(response.text):
+            # Легитимный ответ: по запросу действительно ничего не найдено.
+            # Возвращаем пустой HTML, чтобы получить статус «не найдено».
+            logger.info("Avito вернул пустую выдачу (ничего не найдено)")
+            return ""
         if not self._has_cards(response.text):
             logger.warning(
                 "Живой ответ не содержит карточек объявлений, переключаюсь на локальный файл"
@@ -130,6 +138,12 @@ class AvitoClient:
             return True
         body = response.text.lower()
         return any(marker in body for marker in AvitoClient._CAPTCHA_MARKERS)
+
+    @staticmethod
+    def _is_empty(html: str) -> bool:
+        """Содержит ли HTML маркеры пустой выдачи («ничего не найдено»)."""
+        body = html.lower()
+        return any(marker in body for marker in AvitoClient._EMPTY_MARKERS)
 
     @staticmethod
     def _has_cards(html: str) -> bool:
@@ -178,7 +192,7 @@ class SearchPipeline:
         """Получить HTML, любая ошибка источника превращается в None."""
         try:
             return self._client.fetch_html(article)
-        except (OSError, UnicodeError) as exc:
+        except Exception as exc:  # noqa: BLE001 - граница модуля
             logger.exception("Ошибка получения данных по артикулу %s: %s", article.code, exc)
             return None
 
@@ -211,14 +225,30 @@ class SearchPipeline:
         return True
 
     def _condition_matches(self, condition: str) -> bool:
-        """Проверить, что состояние товара входит в допустимый список."""
-        text = condition.lower()
-        return any(allowed.lower() in text for allowed in self._config.allowed_conditions)
+        """Проверить, что состояние товара входит в допустимый список.
+
+        Значение берётся после двоеточия и сравнивается целиком, чтобы
+        «Как новое» не проходило по подстроке «Новое».
+        """
+        value = condition.lower().split(":", 1)[-1].strip()
+        return any(value == allowed.lower() for allowed in self._config.allowed_conditions)
 
     def _location_matches(self, location: str) -> bool:
-        """Проверить, что локация попадает в Москву или Московскую область."""
-        text = location.lower()
-        return any(keyword in text for keyword in self._config.allowed_location_keywords)
+        """Проверить, что локация попадает в Москву или Московскую область.
+
+        Учитывается только первый сегмент (город/регион до запятой) с
+        префиксом «г. » — точным сравнением с полными названиями. Так
+        «Московский проспект, Санкт-Петербург» не проходит фильтр.
+        """
+        first = location.lower().split(",", 1)[0].strip()
+        first = first.removeprefix("г. ").strip()
+        return any(first == keyword for keyword in self._config.allowed_location_keywords)
+
+    @staticmethod
+    def _normalize_url(url: str) -> str:
+        """Нормализовать ссылку для дедупликации: без query, фрагмента и слеша."""
+        parts = urlsplit(url)
+        return urlunsplit((parts.scheme, parts.netloc, parts.path.rstrip("/"), "", ""))
 
     @staticmethod
     def _dedupe_by_url(cards: list[AdvertCard]) -> list[AdvertCard]:
@@ -226,10 +256,11 @@ class SearchPipeline:
         seen: set[str] = set()
         result: list[AdvertCard] = []
         for card in cards:
-            if card.url in seen:
-                logger.info("Пропущен дубль по ссылке: %s", card.url)
+            key = SearchPipeline._normalize_url(card.url)
+            if key in seen:
+                logger.debug("Пропущен дубль по ссылке: %s", card.url)
                 continue
-            seen.add(card.url)
+            seen.add(key)
             result.append(card)
         return result
 
@@ -323,7 +354,11 @@ def main() -> int:
         logger.info("Поиск по артикулу %s (%s)", article.code, article.description)
         rows.extend(pipeline.process(article))
 
-    exporter.export(rows, config.output_file)
+    try:
+        exporter.export(rows, config.output_file)
+    except OSError as exc:
+        logger.error("Не удалось сохранить результат в %s: %s", config.output_file, exc)
+        return 1
     return 0
 
 

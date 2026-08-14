@@ -127,20 +127,26 @@ class AvitoPageParser:
         return self._first_attr(node, self._TITLE_LINK_SELECTORS, "href")
 
     def _extract_price(self, node: Tag) -> int | None:
-        """Цена: микроданные ``meta[itemprop="price"]`` либо блок цены."""
-        price_text = self._first_attr(node, ('meta[itemprop="price"]',), "content")
-        if not price_text:
+        """Цена: микроданные ``meta[itemprop="price"]`` либо блок цены.
+
+        Блок цены пробуется и в том случае, когда из meta число извлечь
+        не удалось (например, контент с десятичной дробью).
+        """
+        price = self._parse_price(
+            self._first_attr(node, ('meta[itemprop="price"]',), "content")
+        )
+        if price is None:
             price_tag = self._first_select(node, ('div[data-marker="item-price"]',))
             if price_tag is not None:
-                price_text = price_tag.get_text(" ", strip=True)
-        return self._parse_price(price_text)
+                price = self._parse_price(price_tag.get_text(" ", strip=True))
+        return price
 
     def _extract_location(self, node: Tag) -> str:
         """Локация: микроданные ``addressLocality`` либо блок адреса."""
         text = self._first_attr(node, ('meta[itemprop="addressLocality"]',), "content")
         if text:
             return text.strip()
-        selectors = ('span[itemprop="addressLocality"]', 'div[data-marker="item-address"]')
+        selectors = ('span[itemprop="addressLocality"]', '[data-marker="item-address"]')
         tag = self._first_select(node, selectors)
         if tag is None:
             return ""
@@ -173,12 +179,26 @@ class AvitoPageParser:
         value = tag.get(attr)
         return str(value) if value is not None else ""
 
+    # Слова-маркеры составных/нечисловых цен, которые не трактуем как рубли.
+    _UNIT_WORDS: tuple[str, ...] = ("млн", "тыс", "млрд")
+
     @staticmethod
     def _parse_price(text: str | None) -> int | None:
-        """Превратить текстовую цену в int, отбросив всё нецифровое."""
+        """Превратить текстовую цену в целое число рублей.
+
+        Берётся только целая часть до разделителя (``1200.50`` -> ``1200``),
+        разделители групп цифр (``1 200``) отбрасываются. Составные цены
+        (``1,5 млн ₽``) и значения без цифр возвращают None.
+        """
         if not text:
             return None
-        digits = "".join(_DIGITS_RE.findall(text))
+        value = text.strip().lower()
+        if any(word in value for word in AvitoPageParser._UNIT_WORDS):
+            return None
+        match = re.match(r"(\d[\d\s\u00a0]*\d|\d)(?=\D|$)", value)
+        if match is None:
+            return None
+        digits = "".join(_DIGITS_RE.findall(match.group(1)))
         if not digits:
             return None
         try:
