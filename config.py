@@ -63,6 +63,8 @@ class AppConfig:
     """HTTP-заголовки для прямого запроса к Avito (без секретов)."""
     timeout_seconds: float = 15.0
     """Таймаут HTTP-запроса в секундах."""
+    use_live_requests: bool = True
+    """Пытаться ли обращаться к Avito напрямую. False — только локальные HTML."""
     max_results_per_article: int = 5
     """Сколько самых дешёвых объявлений сохранять по каждому артикулу."""
     allowed_conditions: tuple[str, ...] = ("Новое",)
